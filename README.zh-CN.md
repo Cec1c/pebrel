@@ -102,6 +102,11 @@ Pebrel（原名 Nebula）把本地 Shell、远程主机、文件和 AI 命令行
 
 ### 原生、可配置的界面
 
+<p align="center">
+  <img src="docs/screenshots/smooth-cursor.gif" alt="PowerShell 打字与移动时的终端平滑光标效果" width="788" />
+</p>
+
+- 可选的终端平滑光标效果，打字与移动光标时均可平滑跟随。
 - GPU 加速的 GPUI 界面、浅色与深色主题、背景及不透明度设置。
 - 应用图标配色与十一种界面语言，未翻译内容回退英文。
 - 可搜索的设置、命令面板，以及支持检查和热重载的 Lua 配置；已有 TOML 配置仍可使用。

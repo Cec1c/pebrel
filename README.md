@@ -108,6 +108,11 @@ each agent's activity, and read its output without leaving the application.
 
 ### A Native, Configurable Interface
 
+<p align="center">
+  <img src="docs/screenshots/smooth-cursor.gif" alt="Smooth terminal cursor movement while typing and navigating in PowerShell" width="788" />
+</p>
+
+- Optional smooth terminal cursor movement while typing and navigating.
 - GPU-accelerated GPUI interface, light and dark themes, backgrounds, and opacity controls.
 - Application icon palettes and eleven UI language choices with English fallback
   for untranslated text.
