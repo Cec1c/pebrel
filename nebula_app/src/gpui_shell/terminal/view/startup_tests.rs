@@ -1277,16 +1277,26 @@ fn configured_cold_resume_preserves_saved_identity_cwd_and_retries(cx: &mut Test
             matches!(message, Msg::Input(bytes) if bytes.as_ref() == expected.as_bytes())
         }));
         assert!(view.recovery_pending());
-        view.running_program = None;
-        view.recovery.command_ended();
+        feed(view, expected.as_bytes());
+        view.flush_pending_runtime_submit(cx);
+        view.process_event(Event::CommandStart, cx);
+        feed(view, b"\r\nresume failed\r\n");
+        view.process_event(Event::CommandDone { exit_code: Some(1) }, cx);
+        feed(view, b"\x1b]133;A\x07user@host:~$ ");
+        assert!(view.can_retry_recovery());
         view.retry_recovery(cx);
         assert!(receiver.try_iter().any(|message| {
             matches!(message, Msg::Input(bytes) if bytes.as_ref() == expected.as_bytes())
         }));
         assert_eq!(view.session_agent(), Some(target));
         assert_eq!(view.cwd, before_cwd);
-        view.running_program = None;
-        view.recovery.command_ended();
+        feed(view, expected.as_bytes());
+        view.flush_pending_runtime_submit(cx);
+        view.process_event(Event::CommandStart, cx);
+        feed(view, b"\r\nresume failed\r\n");
+        view.process_event(Event::CommandDone { exit_code: Some(1) }, cx);
+        feed(view, b"\x1b]133;A\x07user@host:~$ ");
+        assert!(view.can_choose_recovery_session());
         view.choose_recovery_session(cx);
         let chooser = "codex resume --yolo --config 'model=a b;$(echo nope)' ''";
         assert!(receiver.try_iter().any(|message| {
