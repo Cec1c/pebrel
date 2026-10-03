@@ -10,8 +10,8 @@
 //! 能力探测（让 UI 隐藏入口，而不是让功能在别的平台报错）。
 
 #[cfg(feature = "gpui-shell")]
-pub(crate) mod agent_resume;
 pub(crate) mod acrylic;
+pub(crate) mod agent_resume;
 pub(crate) mod ai_session_identity;
 pub mod capabilities;
 pub mod credentials;
