@@ -21,8 +21,8 @@ pub(crate) fn append(command: String, value: &str, shell: PathQuote) -> Option<S
     }
     let quoted = if matches!(shell, PathQuote::CommandPrompt) {
         let mut quoted = String::new();
-    // CMD passes quotes to the CLI's argv parser. A quoted argument ending in
-    // a backslash needs doubled trailing slashes before its closing quote.
+        // CMD passes quotes to the CLI's argv parser. A quoted argument ending in
+        // a backslash needs doubled trailing slashes before its closing quote.
         for arg in &args {
             let mut item = drop_text_for_paths(std::slice::from_ref(arg), shell)?;
             if item.starts_with('"') {
@@ -57,8 +57,7 @@ mod tests {
             "codex resume id --config 'name=a b;$(touch nope)&|' 'it''s'"
         );
         assert_eq!(
-            append("codex resume id".into(), r#"["a b\\"]"#, PathQuote::CommandPrompt)
-                .unwrap(),
+            append("codex resume id".into(), r#"["a b\\"]"#, PathQuote::CommandPrompt).unwrap(),
             "codex resume id \"a b\\\\\""
         );
         for value in [r#"["%PATH%"]"#, r#"["!VAR!"]"#, r#"["a\"b"]"#] {

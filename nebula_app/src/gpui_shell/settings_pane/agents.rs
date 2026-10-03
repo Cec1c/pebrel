@@ -51,7 +51,11 @@ impl AgentSettingsState {
                     window,
                     move |pane, _, event, _, cx| {
                         if matches!(event, InputEvent::Change)
-                            && pane.agents.resume_feedback.as_ref().is_some_and(|(row, _)| *row == index)
+                            && pane
+                                .agents
+                                .resume_feedback
+                                .as_ref()
+                                .is_some_and(|(row, _)| *row == index)
                         {
                             pane.agents.resume_feedback = None;
                             cx.notify();

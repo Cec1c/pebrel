@@ -52,6 +52,9 @@ mod tests {
         let cleared = apply_updates(&text, &[("agent_resume_args_codex", String::new())]);
         let defaults = RuntimeSettings::from_raw(&RawSettings::from_text(&cleared));
         assert_eq!(defaults.agent_resume_args.get("codex"), "");
-        assert_eq!(RuntimeSettings::from_raw(&RawSettings::default()).agent_resume_args.get("codex"), "");
+        assert_eq!(
+            RuntimeSettings::from_raw(&RawSettings::default()).agent_resume_args.get("codex"),
+            ""
+        );
     }
 }

@@ -39,8 +39,10 @@ fn resume_arguments_save_reopen_reject_invalid_and_clear_through_real_controls(
     let persisted = r#"["--yolo","--config","model=example"]"#;
     assert_eq!(RuntimeSettings::load().agent_resume_args.get("codex"), persisted);
     window.read(|cx| {
-        assert_eq!(cx.global::<crate::gpui_shell::config::Settings>()
-            .agent_resume_args.get("codex"), persisted);
+        assert_eq!(
+            cx.global::<crate::gpui_shell::config::Settings>().agent_resume_args.get("codex"),
+            persisted
+        );
     });
     pane.read_with(&mut window, |pane, _| {
         assert!(matches!(pane.agents.resume_feedback, Some((1, Ok(())))));

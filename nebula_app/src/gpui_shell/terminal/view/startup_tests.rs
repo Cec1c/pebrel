@@ -1238,7 +1238,10 @@ fn configured_cold_resume_preserves_saved_identity_cwd_and_retries(cx: &mut Test
     let (view, window, receiver) = open_at(cx, Some(cwd.path().to_owned()));
     let text = nebula_settings::apply_updates(
         "resume_ai=1\n",
-        &[("agent_resume_args_codex", r#"["--yolo", "--config", "model=a b;$(echo nope)"]"#.into())],
+        &[(
+            "agent_resume_args_codex",
+            r#"["--yolo", "--config", "model=a b;$(echo nope)"]"#.into(),
+        )],
     );
     window.update(|_, cx| {
         let runtime = nebula_settings::RuntimeSettings::from_raw(
@@ -1291,7 +1294,8 @@ fn invalid_resume_arguments_fail_without_submitting_a_default_or_shell_expressio
 ) {
     let (view, window, receiver) = open(cx);
     window.update(|_, cx| {
-        let raw = nebula_settings::RawSettings::from_text("agent_resume_args_codex=--yolo; echo bad\n");
+        let raw =
+            nebula_settings::RawSettings::from_text("agent_resume_args_codex=--yolo; echo bad\n");
         cx.set_global(Settings::load_with_runtime(
             nebula_settings::ThemeName::Nord,
             nebula_settings::RuntimeSettings::from_raw(&raw),
