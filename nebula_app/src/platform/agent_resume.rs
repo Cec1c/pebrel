@@ -2,21 +2,27 @@
 
 use crate::display::side_panel::{PathQuote, drop_text_for_paths};
 
-pub(crate) fn quote_args(args: &[String], shell: PathQuote, program: Option<&str>) -> Option<String> {
+pub(crate) fn quote_args(
+    args: &[String],
+    shell: PathQuote,
+    program: Option<&str>,
+) -> Option<String> {
     #[cfg(windows)]
     let legacy_args = if matches!(shell, PathQuote::PowerShell)
         && program.is_some_and(|program| {
             let name = program.rsplit(['/', '\\']).next().unwrap_or(program);
             name.eq_ignore_ascii_case("powershell") || name.eq_ignore_ascii_case("powershell.exe")
-        })
-    {
-        Some(args.iter()
-            .map(|arg| {
-                let quoted =
-                    crate::platform::elevation::quoted_argument(std::ffi::OsStr::new(arg)).ok()?;
-                String::from_utf16(&quoted).ok()
-            })
-            .collect::<Option<Vec<_>>>()?)
+        }) {
+        Some(
+            args.iter()
+                .map(|arg| {
+                    let quoted =
+                        crate::platform::elevation::quoted_argument(std::ffi::OsStr::new(arg))
+                            .ok()?;
+                    String::from_utf16(&quoted).ok()
+                })
+                .collect::<Option<Vec<_>>>()?,
+        )
     } else {
         None
     };
