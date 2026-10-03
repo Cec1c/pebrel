@@ -8,13 +8,13 @@ fn draw(cx: &mut VisualTestContext) {
     });
 }
 
-fn click(selector: &str, cx: &mut VisualTestContext) {
+fn click(selector: &'static str, cx: &mut VisualTestContext) {
     let bounds = cx.debug_bounds(selector).expect("visible control");
     cx.simulate_click(bounds.center(), Modifiers::default());
     draw(cx);
 }
 
-fn edit_input(selector: &str, value: &str, cx: &mut VisualTestContext) {
+fn edit_input(selector: &'static str, value: &str, cx: &mut VisualTestContext) {
     click(selector, cx);
     cx.simulate_keystrokes(if cfg!(target_os = "macos") { "cmd-a" } else { "ctrl-a" });
     cx.simulate_input(value);
