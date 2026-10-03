@@ -28,8 +28,8 @@ pub(crate) fn append(
     let args = if legacy_powershell {
         args.iter()
             .map(|arg| {
-                let quoted = crate::platform::elevation::quoted_argument(std::ffi::OsStr::new(arg))
-                    .ok()?;
+                let quoted =
+                    crate::platform::elevation::quoted_argument(std::ffi::OsStr::new(arg)).ok()?;
                 String::from_utf16(&quoted).ok()
             })
             .collect::<Option<Vec<_>>>()?
@@ -76,11 +76,14 @@ mod tests {
             "codex resume id --config 'name=a b;$(touch nope)&|' 'it''s'"
         );
         assert_eq!(
-            append("codex resume id".into(), r#"["a b\\"]"#, PathQuote::CommandPrompt, false).unwrap(),
+            append("codex resume id".into(), r#"["a b\\"]"#, PathQuote::CommandPrompt, false)
+                .unwrap(),
             "codex resume id \"a b\\\\\""
         );
         for value in [r#"["%PATH%"]"#, r#"["!VAR!"]"#, r#"["a\"b"]"#] {
-            assert!(append("codex resume id".into(), value, PathQuote::CommandPrompt, false).is_none());
+            assert!(
+                append("codex resume id".into(), value, PathQuote::CommandPrompt, false).is_none()
+            );
         }
         for value in ["--yolo", r#"[1]"#, r#"[""]"#, r#"["\n"]"#] {
             assert!(parse(value).is_none());
@@ -102,8 +105,15 @@ mod native_tests {
             r#"fn main() { print!("{:?}", std::env::args().skip(1).collect::<Vec<_>>()); }"#,
         )
         .unwrap();
-        assert!(std::process::Command::new("rustc")
-            .arg(&source).arg("-o").arg(&executable).status().unwrap().success());
+        assert!(
+            std::process::Command::new("rustc")
+                .arg(&source)
+                .arg("-o")
+                .arg(&executable)
+                .status()
+                .unwrap()
+                .success()
+        );
         let args = [
             "--config",
             "model_provider=\"custom\"",
@@ -114,11 +124,18 @@ mod native_tests {
         ];
         let value = serde_json::to_string(&args).unwrap();
         let quoted_exe = drop_text_for_paths(
-            &[executable.to_string_lossy().into_owned()], PathQuote::PowerShell,
-        ).unwrap();
+            &[executable.to_string_lossy().into_owned()],
+            PathQuote::PowerShell,
+        )
+        .unwrap();
         for (shell, legacy) in [("powershell.exe", true), ("pwsh.exe", false)] {
-            let line = append(format!("& {}", quoted_exe.trim_end()), &value,
-                PathQuote::PowerShell, legacy).unwrap();
+            let line = append(
+                format!("& {}", quoted_exe.trim_end()),
+                &value,
+                PathQuote::PowerShell,
+                legacy,
+            )
+            .unwrap();
             let mut command = std::process::Command::new(shell);
             command.args(["-NoProfile", "-NonInteractive", "-Command", &line]);
             let output = crate::platform::process_output::read_cancellable(
@@ -126,7 +143,8 @@ mod native_tests {
                 std::time::Duration::from_secs(15),
                 8192,
                 &|| false,
-            ).unwrap();
+            )
+            .unwrap();
             assert_eq!(String::from_utf8(output).unwrap(), format!("{args:?}"), "{shell}: {line}");
         }
     }
