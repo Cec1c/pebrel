@@ -189,15 +189,8 @@ impl TerminalView {
         cx: &App,
     ) -> Option<String> {
         let value = cx.global::<Settings>().agent_resume_args.get(source);
-        let legacy_powershell = cfg!(windows)
-            && self.exec_context.as_ref().and_then(|context| context.shell_program()).is_some_and(
-                |program| {
-                    let name = program.rsplit(['/', '\\']).next().unwrap_or(program);
-                    name.eq_ignore_ascii_case("powershell")
-                        || name.eq_ignore_ascii_case("powershell.exe")
-                },
-            );
-        crate::agent_resume::append(command, value, self.path_quote(), legacy_powershell)
+        let program = self.exec_context.as_ref().and_then(|context| context.shell_program());
+        crate::agent_resume::append(command, value, self.path_quote(), program)
     }
 
     pub(crate) fn restore_agent(

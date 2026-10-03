@@ -29,13 +29,13 @@ fn resume_arguments_save_reopen_reject_invalid_and_clear_through_real_controls(
     let _settings_guard = SettingsBytesGuard::capture();
     std::fs::create_dir_all(nebula_settings::settings_dir()).unwrap();
     std::fs::write(nebula_settings::settings_path(), "theme=Nord\nlanguage=en-US\n").unwrap();
-    let (pane, mut window, reply, _) = fixture(cx);
+    let (pane, window, reply, _) = fixture(cx);
     drop(reply);
-    draw(&mut window);
+    draw(window);
     let value = r#"["--yolo", "--config", "model=example"]"#;
-    edit_input("agent-resume-input-1", value, &mut window);
+    edit_input("agent-resume-input-1", value, window);
     assert_eq!(RuntimeSettings::load().agent_resume_args.get("codex"), "");
-    click("agent-resume-save-1", &mut window);
+    click("agent-resume-save-1", window);
     let persisted = r#"["--yolo","--config","model=example"]"#;
     assert_eq!(RuntimeSettings::load().agent_resume_args.get("codex"), persisted);
     window.read(|cx| {
@@ -44,22 +44,22 @@ fn resume_arguments_save_reopen_reject_invalid_and_clear_through_real_controls(
             persisted
         );
     });
-    pane.read_with(&mut window, |pane, _| {
+    pane.read_with(window, |pane, _| {
         assert!(matches!(pane.agents.resume_feedback, Some((1, Ok(())))));
     });
     let reopened = window.update(|window, cx| cx.new(|cx| SettingsPane::new(window, cx)));
-    reopened.read_with(&mut window, |pane, cx| {
+    reopened.read_with(window, |pane, cx| {
         assert_eq!(pane.agents.resume_inputs[1].read(cx).value().as_ref(), persisted);
         assert_eq!(pane.runtime.agent_resume_args.get("claude"), "");
     });
-    edit_input("agent-resume-input-1", "--yolo; echo invalid", &mut window);
-    click("agent-resume-save-1", &mut window);
+    edit_input("agent-resume-input-1", "--yolo; echo invalid", window);
+    click("agent-resume-save-1", window);
     assert_eq!(RuntimeSettings::load().agent_resume_args.get("codex"), persisted);
-    pane.read_with(&mut window, |pane, _| {
+    pane.read_with(window, |pane, _| {
         assert!(matches!(pane.agents.resume_feedback, Some((1, Err(_)))));
     });
-    edit_input("agent-resume-input-1", "[]", &mut window);
-    click("agent-resume-save-1", &mut window);
+    edit_input("agent-resume-input-1", "[]", window);
+    click("agent-resume-save-1", window);
     assert_eq!(RuntimeSettings::load().agent_resume_args.get("codex"), "");
     let input = window.debug_bounds("agent-resume-input-1").unwrap();
     let save = window.debug_bounds("agent-resume-save-1").unwrap();

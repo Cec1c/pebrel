@@ -22,7 +22,7 @@ Add eleven stable `agent_resume_args_<source>` preferences for providers with an
 existing resume command. Each value is a JSON array of literal, nonempty arguments;
 missing/empty values and `[]` append nothing. The zero-dependency settings crate
 preserves the serialized value; the application uses its existing JSON dependency
-and target-shell quoting helper. Arrays are limited to 32 arguments and 64 KiB
+and the native quoting adapter in `platform/agent_resume`. Arrays are limited to 32 arguments and 64 KiB
 quoted text; control characters are rejected. CMD rejects double quotes, `%` and
 `!`, and quoted trailing backslashes are doubled for the native argv parser.
 Windows PowerShell 5's legacy native argv binder additionally receives arguments
