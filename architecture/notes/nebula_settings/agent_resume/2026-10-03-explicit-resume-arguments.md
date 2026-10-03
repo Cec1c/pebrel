@@ -25,6 +25,10 @@ preserves the serialized value; the application uses its existing JSON dependenc
 and target-shell quoting helper. Arrays are limited to 32 arguments and 64 KiB
 quoted text; control characters are rejected. CMD rejects double quotes, `%` and
 `!`, and quoted trailing backslashes are doubled for the native argv parser.
+Windows PowerShell 5's legacy native argv binder additionally receives arguments
+encoded through the existing Windows native argument encoder in `platform/elevation`.
+PowerShell 7 uses the ordinary literal adapter. The pane's frozen native shell
+program selects this distinction; guest/SSH arguments retain the guest adapter.
 
 The GPUI Agent page edits drafts and validates them on Save, reports persistence
 success/failure in place, and resets them with other preferences. Saving updates the
@@ -53,8 +57,13 @@ can contain machine-specific values; this change does not broaden sync policy.
 Authored settings round-trip/reset tests, literal shell-quoting tests, rendered
 Save/reopen/invalid/clear coverage and real cold recovery/PTY submission/retry tests.
 All formatting, architecture, compile and native tests must run in GitHub Actions;
-local inspection is not execution evidence. Native screenshot and real CLI
-acceptance are separate from these regression tests.
+local inspection is not execution evidence. A native Windows test compiles a
+small stdlib argv receiver, then runs the production adapter's generated command
+through Windows PowerShell and PowerShell 7 and compares the complete argv array.
+The [fork native argv experiment](https://github.com/WilliamWang1721/pebrel/actions/runs/37110686203)
+confirmed that ordinary single quotes alone lose embedded quotes and argument
+boundaries in Windows PowerShell 5. Native screenshot and real provider CLI
+acceptance remain separate from the regression tests.
 
 ## Supersedes
 None.

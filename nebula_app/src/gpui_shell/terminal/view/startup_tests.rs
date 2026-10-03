@@ -1256,7 +1256,14 @@ fn configured_cold_resume_preserves_saved_identity_cwd_and_retries(cx: &mut Test
             session_id: Some("obsolete-hook-group".into()),
             session_file: Some(format!("/sessions/rollout-date-{thread}.jsonl")),
         };
+        view.exec_context = Some(crate::runtime_exec::PaneExecContext::from_pty_options(
+            &nebula_terminal::tty::Options {
+                shell: Some(nebula_terminal::tty::Shell::new("wsl.exe".into(), vec![])),
+                ..Default::default()
+            },
+        ));
         let before_cwd = view.cwd.clone();
+        assert_eq!(before_cwd, cwd.path().to_string_lossy().into_owned());
         view.restore_agent(saved, cx);
         assert!(view.pending_shell_command.is_some());
         assert!(!receiver.try_iter().any(|message| matches!(message, Msg::Input(_))));
