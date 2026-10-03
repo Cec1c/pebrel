@@ -19,8 +19,8 @@ persistence and the cached GPUI snapshot.
 
 ## Decision
 Add eleven stable `agent_resume_args_<source>` preferences for providers with an
-existing resume command. Each value is a JSON array of literal, nonempty arguments;
-missing/empty values and `[]` append nothing. The zero-dependency settings crate
+existing resume command. Each value is a JSON array of literal arguments;
+missing/empty values and `[]` append nothing. `[""]` passes one explicit empty argument. The zero-dependency settings crate
 preserves the serialized value; the application uses its existing JSON dependency
 and the native quoting adapter in `platform/agent_resume`. Arrays are limited to 32 arguments and 64 KiB
 quoted text; control characters are rejected. CMD rejects double quotes, `%` and

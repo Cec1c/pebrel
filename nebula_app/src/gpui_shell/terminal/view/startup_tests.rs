@@ -1240,7 +1240,7 @@ fn configured_cold_resume_preserves_saved_identity_cwd_and_retries(cx: &mut Test
         "resume_ai=1\n",
         &[(
             "agent_resume_args_codex",
-            r#"["--yolo", "--config", "model=a b;$(echo nope)"]"#.into(),
+            r#"["--yolo", "--config", "model=a b;$(echo nope)", ""]"#.into(),
         )],
     );
     window.update(|_, cx| {
@@ -1269,7 +1269,7 @@ fn configured_cold_resume_preserves_saved_identity_cwd_and_retries(cx: &mut Test
         assert!(!receiver.try_iter().any(|message| matches!(message, Msg::Input(_))));
         let target = view.session_agent().unwrap();
         assert_eq!(target.session_id.as_deref(), Some(thread));
-        let expected = format!("codex resume {thread} --yolo --config 'model=a b;$(echo nope)'");
+        let expected = format!("codex resume {thread} --yolo --config 'model=a b;$(echo nope)' ''");
         assert_eq!(view.cwd, before_cwd);
         feed(view, b"\x1b]133;A\x07user@host:~$ ");
         view.flush_pending_shell_command(cx);
@@ -1288,7 +1288,7 @@ fn configured_cold_resume_preserves_saved_identity_cwd_and_retries(cx: &mut Test
         view.running_program = None;
         view.recovery.command_ended();
         view.choose_recovery_session(cx);
-        let chooser = "codex resume --yolo --config 'model=a b;$(echo nope)'";
+        let chooser = "codex resume --yolo --config 'model=a b;$(echo nope)' ''";
         assert!(receiver.try_iter().any(|message| {
             matches!(message, Msg::Input(bytes) if bytes.as_ref() == chooser.as_bytes())
         }));

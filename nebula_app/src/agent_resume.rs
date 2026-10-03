@@ -1,6 +1,6 @@
 //! Literal argument arrays for automatic recovery, quoted for the pane's shell.
 
-use crate::display::side_panel::{PathQuote, drop_text_for_paths};
+use crate::display::side_panel::PathQuote;
 
 pub(crate) fn parse(value: &str) -> Option<Vec<String>> {
     if value.trim().is_empty() {
@@ -10,7 +10,10 @@ pub(crate) fn parse(value: &str) -> Option<Vec<String>> {
     if args.is_empty() {
         return Some(args);
     }
-    drop_text_for_paths(&args, PathQuote::Posix)?;
+    if args.len() > 32 || args.iter().any(|arg| arg.chars().any(char::is_control)) {
+        return None;
+    }
+    crate::platform::agent_resume::quote_args(&args, PathQuote::Posix, None)?;
     Some(args)
 }
 
@@ -53,7 +56,12 @@ mod tests {
                 append("codex resume id".into(), value, PathQuote::CommandPrompt, None).is_none()
             );
         }
-        for value in ["--yolo", r#"[1]"#, r#"[""]"#, r#"["\n"]"#] {
+        assert_eq!(parse(r#"[""]"#), Some(vec![String::new()]));
+        assert_eq!(
+            append("codex resume id".into(), r#"[""]"#, PathQuote::Posix, None),
+            Some("codex resume id ''".into())
+        );
+        for value in ["--yolo", r#"[1]"#, r#"[null]"#, r#"["\n"]"#] {
             assert!(parse(value).is_none());
         }
     }
