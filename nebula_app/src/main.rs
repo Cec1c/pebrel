@@ -37,6 +37,7 @@ use nebula_terminal::tty;
 
 mod agent_env;
 mod ai_agents;
+mod agent_resume;
 mod ai_assistant;
 mod ai_hook;
 mod ai_providers;

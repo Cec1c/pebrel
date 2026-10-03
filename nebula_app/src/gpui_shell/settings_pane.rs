@@ -37,6 +37,7 @@ use crate::gpui_shell::widgets::{NebulaButton, settings_control_height};
 
 mod about;
 mod agents;
+mod agent_resume;
 mod app_icon;
 mod appearance;
 mod appearance_advanced;
