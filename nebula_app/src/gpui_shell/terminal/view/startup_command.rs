@@ -188,7 +188,10 @@ impl TerminalView {
         source: &str,
         cx: &App,
     ) -> Option<String> {
-        let value = cx.global::<Settings>().agent_resume_args.get(source);
+        // 没有全局设置（启动早期、无设置的测试窗口）等同于未配置，保持默认命令。
+        let value = cx
+            .try_global::<Settings>()
+            .map_or("", |settings| settings.agent_resume_args.get(source));
         let program = self.exec_context.as_ref().and_then(|context| context.shell_program());
         crate::agent_resume::append(command, value, self.path_quote(), program)
     }
